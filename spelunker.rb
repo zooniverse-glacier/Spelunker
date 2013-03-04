@@ -27,7 +27,7 @@ class Spelunker < Sinatra::Base
 
       data = SkyServer.by_ugriz u: u, g: g, r: r, i: i, z: z, tolerance: tolerance, limit: limit, spec: spec
     elsif (params.has_key? 'query')
-      data = SkyServer.fetch params['query']
+      data = SkyServer.query params['query']
     end
 
     if data.is_a? String

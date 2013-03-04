@@ -9,6 +9,7 @@ class SkyServer
   @@spec_fields = %w(plate mjd fiberID z)
 
   def self.fetch query
+    puts query
     get '/dr9/en/tools/search/x_sql.asp', :query => { :format => 'xml',
                                           :cmd => query }
   end
@@ -20,12 +21,7 @@ class SkyServer
               FROM Galaxy as g, dbo.fGetNearbyObjEq(#{options[:ra]},#{options[:dec]},#{options[:radius]}) as n
               #{"JOIN SpecObj as s ON s.bestobjid = n.objid" if options[:spec]}
               WHERE n.objid=g.objid).gsub("\n", "")
-    begin
-      res = fetch query
-      format res.parsed_response['root']['Answer']['Row']
-    rescue Exception => e
-      "Error: #{e.message}"
-    end
+    self.query query
   end
 
   def self.by_ugriz options
@@ -37,7 +33,10 @@ class SkyServer
                 FROM  Galaxy as g
                 #{"JOIN SpecObj as s ON s.bestobjid = g.objid" if options[:spec]}
                 WHERE #{where})
+    self.query query
+  end
 
+  def self.query query
     begin
       res = fetch query
       format res.parsed_response['root']['Answer']['Row']
