@@ -1,10 +1,12 @@
-require 'sinatra'
+require 'sinatra/base'
 require 'json'
 require 'sinatra/synchrony'
 require './data_sources/sky_server'
+require './lib/sinatra/redis_cache'
 
 class Spelunker < Sinatra::Base
   register Sinatra::Synchrony
+  register Sinatra::RedisCache
 
   get '/pingdom' do
     'ok'
@@ -18,14 +20,21 @@ class Spelunker < Sinatra::Base
       limit = params['limit']
       limit ||= 100
 
-      data = SkyServer.by_ra_dec ra: ra, dec: dec, limit: limit, radius: params['radius'], spec: spec
+      data = cache "#{ra}-#{dec}-#{params['radius']}-#{limit}-#{spec}" do
+        SkyServer.by_ra_dec ra: ra, dec: dec, 
+                            limit: limit, radius: params['radius'], spec: spec
+      end
+
     elsif (params.has_key? 'tolerance')
       u, g, r, i, z = params.values_at('u', 'g', 'r', 'i', 'z')
       limit = params['limit']
       limit ||= 100
       tolerance = params['tolerance'].to_f
 
-      data = SkyServer.by_ugriz u: u, g: g, r: r, i: i, z: z, tolerance: tolerance, limit: limit, spec: spec
+      data = cache "#{u}-#{g}-#{r}-#{i}-#{z}-#{tolerance}-#{limit}-#{spec}" do 
+        SkyServer.by_ugriz u: u, g: g, r: r, i: i, z: z, 
+                           tolerance: tolerance, limit: limit, spec: spec
+      end
     elsif (params.has_key? 'query')
       data = SkyServer.query params['query']
     end

@@ -28,6 +28,7 @@ GEM
     guard-rspec (2.4.1)
       guard (>= 1.1)
       rspec (~> 2.11)
+    hiredis (0.4.5)
     http_parser.rb (0.5.3)
     httparty (0.10.2)
       multi_json (~> 1.0)
@@ -47,6 +48,7 @@ GEM
     rack-protection (1.3.2)
       rack
     rb-fsevent (0.9.3)
+    redis (3.0.3)
     rspec (2.13.0)
       rspec-core (~> 2.13.0)
       rspec-expectations (~> 2.13.0)
@@ -79,11 +81,14 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  em-synchrony
   growl
   guard-rspec
+  hiredis
   httparty
   nokogiri
   rb-fsevent (~> 0.9)
+  redis
   rspec
   sinatra
   sinatra-synchrony
