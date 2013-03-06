@@ -9,7 +9,6 @@ class SkyServer
   @@spec_fields = %w(plate mjd fiberID z)
 
   def self.fetch query
-    puts query
     get '/dr9/en/tools/search/x_sql.asp', :query => { :format => 'xml',
                                           :cmd => query }
   end

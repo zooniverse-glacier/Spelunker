@@ -15,10 +15,8 @@ module Sinatra
         else
           cached = JSON.parse(cached)
           if Time.now < cached["__exp"]
-            puts 'cached'
             cached["data"]
           else
-            puts 'expired'
             store_data key, expiration, block
           end
         end
