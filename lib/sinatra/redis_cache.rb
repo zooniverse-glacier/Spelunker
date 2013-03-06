@@ -50,7 +50,7 @@ module Sinatra
     def self.registered app
       app.helpers RedisCache::Helpers
       
-      app.set :redis_url, 'http://127.0.0.1:6379'
+      app.set :redis_url, lambda { ENV['REDIS_URL'] || 'redis://127.0.0.1:6379' }
       app.set :redis_pool_size, 2
 
       app.redis
