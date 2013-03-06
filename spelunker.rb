@@ -20,7 +20,7 @@ class Spelunker < Sinatra::Base
       limit = params['limit']
       limit ||= 100
 
-      data = cache "#{ra}-#{dec}-#{params['radius']}-#{limit}-#{spec}" do
+      data = cache "#{ra}-#{dec}-#{params['radius']}-#{limit}-#{spec}", (Time.now + 604800) do
         SkyServer.by_ra_dec ra: ra, dec: dec, 
                             limit: limit, radius: params['radius'], spec: spec
       end
@@ -31,7 +31,7 @@ class Spelunker < Sinatra::Base
       limit ||= 100
       tolerance = params['tolerance'].to_f
 
-      data = cache "#{u}-#{g}-#{r}-#{i}-#{z}-#{tolerance}-#{limit}-#{spec}" do 
+      data = cache "#{u}-#{g}-#{r}-#{i}-#{z}-#{tolerance}-#{limit}-#{spec}", (Time.now + 604800) do
         SkyServer.by_ugriz u: u, g: g, r: r, i: i, z: z, 
                            tolerance: tolerance, limit: limit, spec: spec
       end

@@ -2,20 +2,38 @@ require 'uri'
 require 'sinatra/base'
 require 'redis'
 require 'json'
+require 'json/add/core'
 require 'redis/connection/synchrony'
 
 module Sinatra
   module RedisCache
     module Helpers
-      def cache key, &block
+      def cache key, expiration, &block
         cached = settings.redis.get key
         if cached.nil? and block_given?
-          data = block.call
-          settings.redis.set key, data.to_json
-          data
+          store_data key, expiration, block
         else
-          JSON.parse(cached)
+          cached = JSON.parse(cached)
+          if Time.now < cached["__exp"]
+            puts 'cached'
+            cached["data"]
+          else
+            puts 'expired'
+            store_data key, expiration, block
+          end
         end
+      end
+
+      private 
+
+      def store_data key, expiration, block
+        result = block.call
+        data = {
+          data: result,
+          __exp: expiration
+        }
+        settings.redis.set key, data.to_json
+        result
       end
     end
 
