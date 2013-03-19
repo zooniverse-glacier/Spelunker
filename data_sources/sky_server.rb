@@ -6,7 +6,7 @@ class SkyServer
   base_uri 'skyserver.sdss3.org'
 
   @@photo_fields = %w(objid ra dec b l u g r i z petroR90_u petroR90_g petroR90_i petroR90_r petroR90_z)
-  @@spec_fields = %w(plate mjd fiberID z)
+  @@spec_fields = %w(plate mjd fiberID z specObjID)
 
   def self.fetch query
     get '/dr9/en/tools/search/x_sql.asp', :query => { :format => 'xml',
