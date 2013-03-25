@@ -54,8 +54,9 @@ class Spelunker < Sinatra::Base
 
   get '/ned' do
     if (params.has_key? 'ra') && (params.has_key? 'dec') && (params.has_key? 'radius')
-      data = cache "ned-#{params['ra']}-#{params['dec']}-#{params['radius']}", (Time.now + 604800) do
-        NED.by_ra_dec params['ra'], params['dec'], params['radius']
+      ra, dec, radius = params.values_at('ra', 'dec', 'radius').map{|val| val.to_f.round(2)}
+      data = cache "ned-#{ra}-#{dec}-#{radius}", (Time.now + 604800) do
+        NED.by_ra_dec ra, dec, radius
       end
     end
 
