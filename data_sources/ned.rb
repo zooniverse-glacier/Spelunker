@@ -33,7 +33,7 @@ class NED
 
     begin
       format response.parsed_response
-    rescue e
+    rescue Exception => e
       "Error: #{e.message}"
     end
   end
