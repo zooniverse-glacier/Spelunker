@@ -43,7 +43,8 @@ class NED
     tables.map do |table|
       fields = table['FIELD'].map { |field| field['name'] }
       data = table['DATA']['TABLEDATA']['TR']['TD']
-      Hash[fields.zip data]
+      hash = Hash[fields.zip data]
+      hash['uid'] = hash['refcode']
     end
   end
 end
