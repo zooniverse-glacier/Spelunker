@@ -2,6 +2,7 @@ require 'sinatra/base'
 require 'json'
 require 'sinatra/synchrony'
 require './data_sources/sky_server'
+require './data_sources/ned'
 require './lib/sinatra/redis_cache'
 
 class Spelunker < Sinatra::Base
@@ -20,7 +21,7 @@ class Spelunker < Sinatra::Base
       limit = params['limit']
       limit ||= 100
 
-      data = cache "#{ra}-#{dec}-#{params['radius']}-#{limit}-#{spec}", (Time.now + 604800) do
+      data = cache "sky-server-#{ra}-#{dec}-#{params['radius']}-#{limit}-#{spec}", (Time.now + 604800) do
         SkyServer.by_ra_dec ra: ra, dec: dec, 
                             limit: limit, radius: params['radius'], spec: spec
       end
@@ -31,12 +32,31 @@ class Spelunker < Sinatra::Base
       limit ||= 100
       tolerance = params['tolerance'].to_f
 
-      data = cache "#{u}-#{g}-#{r}-#{i}-#{z}-#{tolerance}-#{limit}-#{spec}", (Time.now + 604800) do
+      data = cache "sky-server-#{u}-#{g}-#{r}-#{i}-#{z}-#{tolerance}-#{limit}-#{spec}", (Time.now + 604800) do
         SkyServer.by_ugriz u: u, g: g, r: r, i: i, z: z, 
                            tolerance: tolerance, limit: limit, spec: spec
       end
     elsif (params.has_key? 'query')
       data = SkyServer.query params['query']
+    end
+
+    if data.is_a? String
+      status 404
+      body({ status: data }.to_json)
+    elsif data.nil?
+      status 401
+      body({ status: "Bad Parameters" }.to_json)
+    else
+      status 200
+      body data.to_json
+    end
+  end
+
+  get '/ned' do
+    if (params.has_key? 'ra') && (params.has_key? 'dec') && (params.has_key? 'radius')
+      data = cache "ned-#{params['ra']}-#{params['dec']}-#{params['radius']}", (Time.now + 604800) do
+        NED.by_ra_dec params['ra'], params['dec'], params['radius']
+      end
     end
 
     if data.is_a? String
