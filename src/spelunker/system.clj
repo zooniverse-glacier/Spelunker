@@ -23,3 +23,7 @@
     (s/stop (:server system)))
   (m/disconnect!)
   (dissoc system :server))
+
+(defn -main
+  []
+  (start (system)))

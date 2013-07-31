@@ -1,10 +1,13 @@
 (ns spelunker.web.response
-  (:use [ring.util.response :only [content-type charset response status]]))
+  (:use [ring.util.response :only [header content-type charset response status]]))
 
 (defn- resp
   [body]
   (partial status (-> (response body)
                       (content-type "application/json")
+                      (header "Access-Control-Allow-Origin" "*")
+                      (header "Access-Control-Allow-Methods" "OPTIONS, GET, PUT, POST")
+                      (header "Access-Control-Allow-Headers" "content-type")
                       (charset "utf-8"))))
 
 (defn resp-ok
