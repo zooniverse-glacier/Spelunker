@@ -1,7 +1,6 @@
 (ns spelunker.web.routes
   (:use ring.middleware.json
-        ring.middleware.stacktrace
-        [ring.middleware.cors :only [wrap-cors]])
+        ring.middleware.stacktrace)
   (:require [compojure.core :as cmpj :refer [OPTIONS GET POST context]]
             [compojure.route :refer [not-found]]
             [spelunker.web.response :refer [resp-ok]]
